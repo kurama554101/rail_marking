@@ -11,7 +11,7 @@ __all__ = ["RailtrackSegmentationHandler"]
 
 
 class RailtrackSegmentationHandler:
-    def __init__(self, path_to_snapshot, model_config, overlay_alpha=0.5):
+    def __init__(self, path_to_snapshot, model_config, overlay_alpha=0.5, device="cpu"):
         if not os.path.isfile(path_to_snapshot):
             raise Exception("{} does not exist".format(path_to_snapshot))
 
@@ -20,7 +20,7 @@ class RailtrackSegmentationHandler:
 
         self._data_config = Rs19DatasetConfig()
         self._model = BiSeNetV2(n_classes=self._data_config.num_classes)
-        self._model.load_state_dict(torch.load(path_to_snapshot)["state_dict"])
+        self._model.load_state_dict(torch.load(path_to_snapshot, map_location=torch.device(device))["state_dict"])
         self._model.eval()
 
         if torch.cuda.is_available():
